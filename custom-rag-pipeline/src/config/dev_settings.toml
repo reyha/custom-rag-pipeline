@@ -1,0 +1,5 @@
+DOC_RETRIEVER = "doc_retrieval_ada"
+DEFAULT_MAX_TOKENS = 3000
+CHUNK_SIZE = 1024
+TOP_N = 3
+

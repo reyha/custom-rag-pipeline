@@ -1,0 +1,16 @@
+[DEFAULT]
+# App related
+APP_NAME = 'customragpipeline'
+PORT = 5550
+
+# Log Related
+log_level = 'INFO'
+
+# Data Related
+raw_file_path = "../../Downloads/ConceptsofBiology-WEB.pdf"
+collection = "customragpipeline"
+embed_model_path = "../../Downloads/all-mpnet-base-v2"
+
+# LLM
+llm_model_path = "../../Downloads/llama-2-13b-chat.Q4_0.gguf"
+
