@@ -3,6 +3,7 @@ UI app for QA pipeline powered by streamlit
 """
 import streamlit as st
 import requests
+import json
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
@@ -27,7 +28,9 @@ def get_qna_response(query):
     }
 
     response = session.post(url=url, json=request, verify=False)
-    json_response = response.json()
+
+    # Retrieve response from output
+    json_response = json.loads(response.text)
     result = json_response.get('response', " ")
 
     return result
@@ -36,11 +39,8 @@ def get_qna_response(query):
 if st.button("Submit"):
     try:
         # 1. Get output from qa service
-        response = get_qna_response(user_input)
-        # 2. Retrieve response from output
-        json_response = response.json()
-        answer = json_response.get("response", "")
-        # 3. Display to user
+        answer = get_qna_response(user_input)
+        # 2. Display to user
         st.write(answer)
     except Exception as e:
         st.write(f"An error occurred: {e}")
