@@ -6,7 +6,6 @@ as our primary data source, `Llama-13b` as our query responder model and Sentenc
 
 ## Installation 
 
-------------------------------------------------------------------------------------------------------------------------
 
 - Clone this repo 
 - There are 2 ways to install:
@@ -19,7 +18,6 @@ as our primary data source, `Llama-13b` as our query responder model and Sentenc
 
 ## Quick Start
 
-------------------------------------------------------------------------------------------------------------------------
 
 ### Architecture
 
@@ -65,7 +63,6 @@ Pipeline outputs 3 fields as json object:
 
 ## Evaluation 
 
-------------------------------------------------------------------------------------------------------------------------
 
 To build a comprehensive pipeline, we should ideally look at 3 kinds of metrics: 
 1. Data Science (DS) metrics: such as relevancy, factual correctness etc.
@@ -99,8 +96,6 @@ contains all of the above mentioned metrics for each query.
 
 ## Run UI using Streamlit
 
-------------------------------------------------------------------------------------------------------------------------
-
 
 To run pipeline on browser, run the following under project root directory:
 ```
@@ -113,7 +108,6 @@ You will see UI similar to what shown below:
 
 ## Issues & Potential Solutions
 
-------------------------------------------------------------------------------------------------------------------------
 1. Library-based development: this pipeline primarily relies on Llamindex library for retrieval and responder implementation
 which makes it hard to customize. We can use a local vector store to index all documents and use naive implementations of 
 llama to customize prompt further. Sample prompt is added in code in `query_responder.py`.
