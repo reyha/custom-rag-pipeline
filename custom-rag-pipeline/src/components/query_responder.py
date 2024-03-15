@@ -19,7 +19,7 @@ class QueryResponder(BaseModule):
         if type == "lib":
             query_engine = RetrieverQueryEngine.from_args(retriever, llm=llm)
             user_input = self.inputs.get("user_query")
-            response = query_engine.query(user_input)
+            response = query_engine.query(user_input).response
             return response
         elif type == "custom":
             """
