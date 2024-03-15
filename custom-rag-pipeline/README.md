@@ -35,11 +35,14 @@ no other data loaders.
 6. We only have access to Llama-13b which is used as query responder model
 
 
-### Input 
+### Input
 This pipeline takes in 2 arguments:
 1. `user_query` (mandatory): query that user wants model to respond to 
 2. `model_id` (optional): id of the model user wants this query to use for responding. We currently support only `llama-13b` and 
 this field defaults to this model.
+
+Note: This pipeline uses Flask for backend. 
+
 ```
 {
    "user_query": "What is biology"
@@ -61,8 +64,7 @@ Pipeline outputs 3 fields as json object:
 ```
 
 
-## Evaluation 
-
+## Evaluation
 
 To build a comprehensive pipeline, we should ideally look at 3 kinds of metrics: 
 1. Data Science (DS) metrics: such as relevancy, factual correctness etc.
