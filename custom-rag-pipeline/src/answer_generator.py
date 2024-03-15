@@ -5,11 +5,11 @@ import json
 import time
 from typing import Any
 
-from llama_index.llms.llama_cpp import LlamaCPP
-
 from src.components.base_classes.base_module import BaseModule
 from src.components.query_responder import QueryResponder
 from src.components.search_handler import SearchHandler
+from src.components.llm_handler import LLMHandler
+from src.utils.exceptions import CustomException
 
 
 class QAGenerator(BaseModule):
@@ -21,7 +21,20 @@ class QAGenerator(BaseModule):
         self.interim_outputs.update({"answer_id": self.answer_id})
         self.query_responder = QueryResponder(self.service_state)
         self.search_handler = SearchHandler(self.service_state)
-        self.to_yield = {}
+        self.llm_handler = LLMHandler(self.service_state)
+
+    def package_response(self):
+        user_query = self.inputs.get("user_query", "")
+        response = self.interim_outputs.get("response", "")
+        json_string = json.dumps(
+            {
+                "response": response,
+                "user_query": user_query,
+                "answer_id": self.answer_id
+            },
+            separators=(",", ":"),
+        )
+        return json_string
 
     def prepare(self):
         """
@@ -29,18 +42,11 @@ class QAGenerator(BaseModule):
         retriever and LLM i.e. llama-13b.
         """
         try:
-            # 1. Initialize retriever
+            # 1. Initialize retriever and save to output dict
             retriever = self.search_handler.get_doc_retriever()
-            # 2. Initialize LLM
-            llm = LlamaCPP(
-                model_path=self.config['llm_model_path'],
-                temperature=1.0,
-                max_new_tokens=256,
-                context_window=3900,
-                generate_kwargs={},
-                verbose=True,
-            )
-            # 3. Write to Outputs Dict
+            # 2. Initialize LLM and save to output dict
+            llm = self.llm_handler.get_llm()
+            # 3. Write to Output Dict
             self.interim_outputs.update({"retriever": retriever})
             self.interim_outputs.update({"llm": llm})
         except Exception as error:
@@ -51,28 +57,24 @@ class QAGenerator(BaseModule):
         """
         Generate response and package as json.
         """
-        # 1. Read from Outputs Dict
-        retriever = self.interim_outputs.get("retriever", "")
-        llm = self.interim_outputs.get("llm", "")
+        # 1. Run query responder
+        # a. If type set to "lib", pipeline will use llamaindex
+        # b. [To-Do] If type set to "custom", pipeline will load prompts from prompt factory and call llm
+        try:
+            self.query_responder.run_query_responder(type="lib")
+        except Exception:
+            self.logger.error(
+                f"Error - InternalError - answer_id:{self.answer_id}:msg:issue_getting_llm_response"
+            )
+            raise CustomException(
+                500,
+                "Issue in getting response from llm"
+            )
 
-        # 2. Run query responder
-        # Note:
-        # 1. If type set to "lib", pipeline will use llamaindex
-        # 2. [To-Do] If type set to "custom", pipeline will load prompts from prompt factory and call llm
-        response = self.query_responder.run_query_responder("lib", retriever, llm)
-
-        # 3. Package output as json
-        user_query = self.inputs.get("user_query", "")
+        # 2. Package response as json
+        output = self.package_response()
         self.logger.info(
             f"answer_id:{self.answer_id}: time taken to generate result : "
             f"{(time.time() - self.app_start_time)} : "
         )
-        json_string = json.dumps(
-            {
-                "response": response,
-                "user_query": user_query,
-                "answer_id": self.answer_id
-            },
-            separators=(",", ":"),
-        )
-        return json_string
+        return output

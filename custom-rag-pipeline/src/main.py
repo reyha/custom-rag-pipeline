@@ -48,6 +48,13 @@ def validate_request(request_data):
         raise ValidationException(422, "user_query cannot be empty string")
     validated_fields["user_query"] = user_query
 
+    # 3. Model ID
+    model_id = request_data.get('model_id', None)
+    if (not model_id) or (not isinstance(model_id, str)):
+        logger.warning(f"answer_id:{model_id}:Defaulting Model")
+        model_id = "oss_llama-13b"
+    validated_fields["model_id"] = model_id
+
     return validated_fields
 
 
@@ -81,13 +88,13 @@ def get_qna_response():
                                      vector_store=vector_store,
                                      logger=logger)
         # 2. Initialize QA Generator
-        qa_gen = QAGenerator(service_state)
+        qa = QAGenerator(service_state)
 
         # 3. Prepare context/relevant docs and LLM
-        qa_gen.prepare()
+        qa.prepare()
 
         # 4. Generate response
-        return Response(qa_gen.generate())
+        return Response(qa.generate())
 
     except ValidationException as validation_exception:
         logger.error(f"answer_id:{answer_id}:"
