@@ -14,3 +14,5 @@ llama-index-vector-stores-chroma
 llama-cpp-python
 llama-index-llms-llama-cpp
 streamlit
+sentence_transformers
+rouge_score
