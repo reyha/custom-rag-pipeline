@@ -91,7 +91,9 @@ python eval.py --test_csv data/<name_of_testfile>
 ```
 
 After this script completes, look out for an output csv `<name_of_testfile>_metrics.csv`  in same location. This file 
-contains all of the above mentioned metrics for each query. 
+contains all of the above mentioned metrics for each query.
+
+Note: Ensure flask backend is running before running evaluation script as qa responses are generated on the fly.
 
 
 ## Run UI using Streamlit
@@ -105,6 +107,7 @@ streamlit run streamlit_app.py
 You will see UI similar to what shown below:
 ![image](images/streamlit_ui.png)
 
+Note: Ensure flask backend is running before running streamlit UI.
 
 ## Issues & Potential Solutions
 
