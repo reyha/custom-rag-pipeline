@@ -1,5 +1,3 @@
-
-
 import logging
 import os
 import os.path as path
@@ -14,9 +12,11 @@ FORMATTER = logging.Formatter(
 
 UNIQUE_ID = "unique_id"
 
+
 class CustomAdapater(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         return f"[{self.extra[UNIQUE_ID]}] - {msg}", kwargs
+
 
 def create_log_file_dir(app_name):
     app_dir = path.abspath(path.join(__file__, "../../"))

@@ -1,13 +1,11 @@
 import os
-
 import toml
 
 
 class Configuration:
     """
-        To Fill
+        To fill, upload and get config as needed
     """
-
     def __init__(self, settings_file):
         with open(settings_file, "r", encoding="utf-8") as file:
             self.app_config = toml.load(file)
@@ -22,7 +20,7 @@ class Configuration:
             return self.app_config
 
         default_config = self.app_config.get("DEFAULT", {})
-        # Override default config with environment specific config
+        # Override default config with environment specific config if present
         updated_config = self.update_config(default_config, self._get_current_env())
 
         return updated_config

@@ -7,10 +7,15 @@ PORT = 5550
 log_level = 'INFO'
 
 # Data Related
-raw_file_path = "../../Downloads/ConceptsofBiology-WEB.pdf"
+# [To-Do] absolute paths only for testing; to be changed for prod
+raw_file_path = "../../../Downloads/ConceptsofBiology-WEB.pdf"
 collection = "customragpipeline"
-embed_model_path = "../../Downloads/all-mpnet-base-v2"
+
+# Embedding Model
+# [To-Do] absolute paths only for testing; to be changed for prod
+embed_model_path = "../../../Downloads/all-mpnet-base-v2"
 
 # LLM
-llm_model_path = "../../Downloads/llama-2-13b-chat.Q4_0.gguf"
+# [To-Do] absolute paths only for testing; to be changed for prod
+llm_model_path = "../../../Downloads/llama-2-13b-chat.Q4_0.gguf"
 

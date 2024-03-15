@@ -1,3 +1,7 @@
+"""
+Service state for QA pipeline
+"""
+
 from typing import Any
 
 
@@ -8,7 +12,7 @@ class ServiceState:
         app_start_time: Any,
         config: dict,
         inputs: dict,
-        data_store: Any,
+        vector_store: Any,
         logger: Any,
         interim_outputs: dict=None
     ) -> None:
@@ -17,7 +21,7 @@ class ServiceState:
         self.inputs = inputs
         self.config = config
         self.logger = logger
-        self.data_store = data_store
+        self.vector_store = vector_store
         if interim_outputs is not None:
             self.interim_outputs = interim_outputs
         else:

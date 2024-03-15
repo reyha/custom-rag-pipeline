@@ -1,6 +1,5 @@
 from typing import Any
 
-
 class BaseModule:
     def __init__(self, service_state: Any) -> None:
         super().__init__()

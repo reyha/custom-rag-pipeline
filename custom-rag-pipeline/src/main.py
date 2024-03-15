@@ -17,21 +17,21 @@ from src.components.data_handler import DataHandler
 app = Flask(__name__)
 
 # 1. Initialize configs
-base_configuration = Configuration("./src/config/settings.toml")
-dev_configuration = Configuration("./src/config/dev_settings.toml").get_config(not_env_specific=True)
+base_configuration = Configuration("config/settings.toml")
+dev_configuration = Configuration("config/dev_settings.toml").get_config(not_env_specific=True)
 
 # 1.1 Get default config and environment specific config
 app_configuration = base_configuration.get_config()
 
 # 2. Initialize logger
-logger = get_logger("common" "INFO")
+logger = get_logger("customragpipeline" "INFO")
 
-# 3. Create data store
+# 3. Create vector store
 data_handler = DataHandler(app_configuration)
-data_store = data_handler.create_vector_store()
+vector_store = data_handler.create_vector_store()
 
 
-def validate_request(request_data, answer_id):
+def validate_request(request_data):
     # A. Mandatory fields
     # 1. Validate mandatory fields
     mandatory_fields = ['user_query']
@@ -53,17 +53,16 @@ def validate_request(request_data, answer_id):
 
 @app.route('/v1/custom_rag_qna', methods=['POST'])
 def get_qna_response():
-    """Define the endpoint for QA Chatbot Plugin
+    """Define the endpoint for QA Response
     Returns:
-        flask.Response: A streaming response object containing
-                        answer and helpful articles.
+        flask.Response: A response object containing
+                        helpful and relevant responses.
     """
     # Generate answer_id
     answer_id = str(uuid.uuid1())
     logger.info(f"answer_id:{answer_id}")
 
     try:
-
         logger.info(f"Starting to serve request:answer_id:{answer_id}")
         app_start_time = time.time()
 
@@ -72,19 +71,23 @@ def get_qna_response():
         request_data = json.loads(request.data)
 
         # 1.1 Validate fields
-        validated_fields = validate_request(request_data, answer_id)
+        validated_fields = validate_request(request_data)
 
         # ==============================================================
         service_state = ServiceState(answer_id=answer_id,
                                      app_start_time=app_start_time,
                                      config={**dev_configuration, **app_configuration},
                                      inputs={**validated_fields},
-                                     data_store=data_store,
+                                     vector_store=vector_store,
                                      logger=logger)
+        # 2. Initialize QA Generator
+        qa_gen = QAGenerator(service_state)
 
-        bot = QAGenerator(service_state)
-        bot.prepare()
-        return Response(bot.generate())
+        # 3. Prepare context/relevant docs and LLM
+        qa_gen.prepare()
+
+        # 4. Generate response
+        return Response(qa_gen.generate())
 
     except ValidationException as validation_exception:
         logger.error(f"answer_id:{answer_id}:"
@@ -106,8 +109,6 @@ def get_qna_response():
                      f"CustomException: "
                      f"{custom_exception.response_code} - {custom_exception.response_msg} :"
                      f"{traceback_str}")
-        # Assumption - Custom Errors are logged in CAL before raising - So, no CAL log here
-
         error_payload = json.dumps({
             "name": "CUSTOM_EXCEPTION",
             "message": custom_exception.response_msg,
