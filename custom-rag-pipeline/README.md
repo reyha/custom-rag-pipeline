@@ -66,7 +66,7 @@ Pipeline outputs 3 fields as json object:
 
 To build a comprehensive pipeline, we should ideally look at 3 kinds of metrics: 
 1. Data Science (DS) metrics: such as relevancy, factual correctness etc.
-2. Performance metrics: such as laetcny, throughput etc.
+2. Performance metrics: such as latency, throughput etc.
 3. Cost analysis: overall cost in terms of resources etc.
 However, due to time constraints, we primarily focus on DS metrics for this project. 
 
@@ -76,7 +76,7 @@ We use four DS metrics to evaluate our pipeline:
 2. SAS (Semantic Answer Similarity): Determines similarity score between a pair of generated and gold annotated responses. Range: 0-1
 2. ROUGE-L (Recall-Oriented Understudy for Gisting Evaluation - Longest Common Subsequence (LCS)): Takes into account 
 sentence-level structure similarity naturally and identifies longest co-occurring in sequence n-grams automatically. Range: 0-1
-4. Weighted Metric - A weighted function of all previous response-level metrics. This metric gives highest max weightage 
+4. Aggregated Metric - A weighted function of all previous response-level metrics. This metric gives highest max weightage 
 to STS followed by equal weightage to SAS and ROUGE. These weights are chosen randomly and are subject to change based 
 on findings.
 
@@ -91,7 +91,7 @@ python eval.py --test_csv data/<name_of_testfile>
 ```
 
 After this script completes, look out for an output csv `<name_of_testfile>_metrics.csv`  in same location. This file 
-contains all of the above mentioned metrics for each query.
+contains all the above-mentioned metrics for each query.
 
 Note: Ensure flask backend is running before running evaluation script as qa responses are generated on the fly.
 

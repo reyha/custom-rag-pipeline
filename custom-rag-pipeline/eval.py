@@ -62,7 +62,7 @@ def compute_metrics(generated_answers, gold_answers):
     1. STS
     2. ROUGE
     3. SAS
-    4. Weighted Metric - customized function to give max weightage to STS
+    4. Aggregated_Metric - a weighted metric that gives highest weightage to STS
     followed by equal weightage to SAS and ROUGE. These weights are chosen
     randomly and are subject to change based on findings.
     """
